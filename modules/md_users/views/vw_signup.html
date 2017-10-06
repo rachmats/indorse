@@ -1,0 +1,66 @@
+<!-- views/login.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>INDORSE POC Backend</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->    
+   <script src="https://code.jquery.com/jquery-1.10.2.js"></script>   
+    
+    <style>
+        body        { padding-top:80px; background }
+    </style>
+</head>
+<body>
+<div class="container">
+
+	<div class="col-sm-6 col-sm-offset-3">
+
+		<h1><span class="fa fa-user"></span> Sign Up</h1>
+
+		<!-- SIGN UP FORM -->
+		<form method="post">
+			<div class="form-group">
+				<label>Email</label>
+				<input type="text" class="form-control" id="email" name="email" required>
+			</div>
+			<div class="form-group">
+				<label>Name</label>
+				<input type="text" class="form-control" id="name" name="name"  required>
+			</div>
+			
+			<div class="form-group">
+				<label>Password</label>
+				<input type="password" class="form-control"  id="password" name="password"  required>
+			</div>
+
+			<button type="submit" class="btn btn-warning btn-lg">Submit</button>
+		</form>
+
+	</div>
+
+</div>
+</body>
+</html>
+<script>
+	
+	$('form').submit(function(e){
+		var oForm = $('form');
+		var rec = $('form').serializeArray();
+		e.preventDefault();
+		if(oForm[0].checkValidity()) {
+			$.post('../md_users/process', rec, function(msg){
+				if(msg['message'] == 'Success')
+				{
+					alert('Thank you for signing-up at Indorse.io.  Welcome to the Indorse community.  For the purposes of verification, we request you to click on the following link to verify your email address')							
+					window.location.href = '../../md_login/index/';
+				}
+				else
+				{
+					alert('Something Wrong !!')		
+				}
+			}, 'json');
+		}
+	});    
+
+</script>

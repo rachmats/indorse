@@ -1,0 +1,71 @@
+<!-- views/login.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>Node Authentication</title>
+     <% include ../../../modules/md_home/views/head.html %>
+    
+</head>
+  <body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+
+      <header class="main-header">
+        <!-- Logo -->
+        <a href="" class="logo">
+          <!-- mini logo for sidebar mini 50x50 pixels -->
+          <span class="logo-mini"><b>Indorse</b></span>
+          <!-- logo for regular state and mobile devices -->
+          <span class="logo-lg"><b>INDORSE</b>POC</span>
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top" role="navigation">
+          <!-- Sidebar toggle button-->
+        </nav>
+      </header>
+<body>
+	
+<div class="container">
+
+<div class="col-sm-6 col-sm-offset-3">
+
+    <h1><span class="fa fa-sign-in"></span> Login</h1>
+    <!-- LOGIN FORM -->
+    <form  method="post">
+        <div class="form-group">
+            <label>Email</label>
+            <input type="text" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-control"  id="password" name="password" required>
+        </div>
+
+        <button type="submit" class="btn btn-warning btn-lg">Login</button>
+        <a href='../../md_users/signup' class="btn btn-warning btn-lg">SignUp</a>        
+    </form>
+</div>
+        <% include  ../../../modules/md_home/views/js.html %>		
+</div>
+</body>
+</html>
+<script>
+	$('form').submit(function(e){
+		var oForm = $('form');
+		var rec = $('form').serializeArray();
+		e.preventDefault();
+		if(oForm[0].checkValidity()) {
+			$.post('../md_login/process', rec, function(msg){
+				if(msg['success']== true)
+				{
+					window.location.href = '../../md_claims/index/?m=data';
+				}
+				else
+				{
+					alert('Incorrect password !!')
+				}
+			}, 'json');
+		}
+	});    
+
+</script>
+

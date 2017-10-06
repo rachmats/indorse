@@ -1,0 +1,134 @@
+	<link rel="stylesheet" href="/AdminLTE/plugins/select2/select2.css">
+
+      <!-- Left side column. contains the logo and sidebar -->
+      <aside class="main-sidebar" >
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar" >
+          <!-- Sidebar user panel -->
+          <div class="user-panel">
+          </div>
+              <ul class="sidebar-menu" >                
+                  <li class="active">
+                      <a class="" href="">
+                          <i class="icon_house_alt"></i>
+                          <span>Filter By</span>    
+                          
+        
+                      </a>
+                  </li>
+				  <form class="form-validate form-horizontal" action="", method="GET" name="frmfilter" id="frmfilter"  method="post" >
+
+				  <div class="row">
+						  <div class="form-group" style="padding-top:10px;padding-left:20px;">
+								<div class="col-lg-7" >
+										  <select class="form-control" id="f_branch" name="f_branch" style='width:200px;' type="text" required /></select>										  
+							  </div>
+						  </div>
+				  </div>				  
+				  <div class="row">
+						  <div class="form-group" style="padding-top:10px;padding-left:20px;">
+								<div class="col-lg-7" >
+										  <select class="form-control" id="f_cro" name="f_cro" style='width:200px;' type="text" required /></select>										  
+							  </div>
+						  </div>
+				  </div>				  
+                  
+				  <div class="row">
+						  <div class="form-group" style="padding-top:10px;padding-left:20px;">
+								<div class="col-lg-7" >
+							<select class="form-control" id="f_product" name="f_product" style='width:200px;' type="text" required /></select>									  
+							<!--------<select multiple id="f_product" style="width:300px">
+									<option value="AL">Alabama</option>
+									<option value="Am">Amalapuram</option>
+									<option value="An">Anakapalli</option>
+									<option value="Ak">Akkayapalem</option>
+									<option value="WY">Wyoming</option>
+								</select> ----->
+										  
+							  </div>
+						  </div>
+				  </div>				  
+                  
+				  
+				  <div class="form-group ">
+					  <div class="col-lg-10">
+						  <input  id="f_date_start" name="f_date_start" placeholder="Year Start" minlength="5" style="width:100px;" type="text" />-
+						  <input id="f_date_end" name="f_date_end" placeholder="Year End" minlength="5" style="width:100px;" type="text" />						  
+					  </div>
+				  </div>
+				  <div class="form-group ">
+					  <div class="col-lg-10">
+						  <input  id="f_gp_start"  name="f_gp_start" placeholder="GP Start" minlength="5" style="width:100px;" type="text" />-
+						  <input id="f_gp_end"  name="f_gp_end" placeholder="GP End" minlength="5" style="width:100px;" type="text" />						  
+
+					  </div>
+				  </div>
+                  
+				  <div class="form-group ">
+					  <div class="col-lg-10">
+						  <input id="f_account_name" name="f_account_name" placeholder="Account Name" minlength="5" style="width:210px;" type="text"  />
+					  </div>
+				  </div>
+                  
+				  <div class="form-group" >
+					  <div class="col-lg-10" style="margin-top:20px;">
+						  <a class="btn btn-primary" href="javascript:void(0)"  onclick="fnLoadData(1)">Preview</a>										 						  
+					  </div>
+				  </div>
+                  
+              </ul>
+              <!-- sidebar menu end-->            
+        </section>
+        <!-- /.sidebar -->
+      </aside>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>       
+
+    <script src="/AdminLTE/plugins/jQuery/jQuery-2.1.4.min.js"></script>    
+    <script src="/AdminLTE/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/AdminLTE/dist/js/app.min.js"></script>
+    <script src="/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+    <script src="/AdminLTE/plugins/datepicker/bootstrap-datepicker.js"></script>
+<!----	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script> ---->   
+	<script src="/AdminLTE/plugins/input-mask/jquery.masknumber.js"></script>    
+    <script src="/AdminLTE/plugins/select2/select2.min.js"></script>
+    <script src="/hightcharts/js/highcharts.js"></script>
+    <script src="/hightcharts/js/highcharts-3d.js"></script>
+    <script src="/hightcharts/js/highcharts-more.js"></script>
+    
+<script>
+var base_url = window.location.href;	
+
+$.getJSON("http://localhost:3000/cro", function(data) {
+
+      $("#f_branch").select2({
+         data: data,
+         multiple: true,
+         width: "180px",
+         placeholder:'Branch'
+      });
+
+}); 
+$.getJSON("http://localhost:3000/cro", function(data) {
+
+      $("#f_cro").select2({
+         data: data,
+         multiple: true,
+         width: "180px",
+         placeholder:'CRO'
+      });
+
+}); 
+
+$.getJSON("http://localhost:3000/cro", function(data) {
+
+      $("#f_product").select2({
+         data: data,
+         multiple: true,
+         width: "180px",
+         placeholder:'Product'
+      });
+
+}); 
+
+    
+</script>

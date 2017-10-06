@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+        <% include ../../../modules/md_home/views/head.html %>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">		
+        <% include ../../../modules/md_home/views/headers.html %>        
+        <% include ../../../modules/md_home/views/vw_home_dyn.html  %>                        
+</body>
+</html>
+        <% include  ../../../modules/md_home/views/js.html %>		
+<script>
+var baseurl = window.location.href;
+var mdl = baseurl.split("/");
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+var m = getParameterByName('m');
+var claim_id = getParameterByName('claim_id');
+$(document).ready(function() {
+	var url = mdl[2]+"/"+mdl[3]+"/"+'<%= fnmodule %>'+"/?m="+m+"&claim_id="+claim_id;
+	$("#myContent").load('http://'+url);			
+});
+</script>
