@@ -37,20 +37,6 @@ function saltHashPassword(userpassword) {
 }
 
 
-    
-app.use(session({
-  cookieName: 'session',
-  secret: 'random_string_goes_here',
-  duration: 30 * 60 * 1000,
-  activeDuration: 5 * 60 * 1000,
-}));
-
-exports.vsess = function(req, res){
-	
-        req.session.user = 'ok';
-  
-};
-
 exports.index = function(req, res){
 		
     res.pageInfo = {};
