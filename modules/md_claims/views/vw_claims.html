@@ -42,9 +42,7 @@
         	
 fnloadDataList(1);	
 function fnloadDataList(vPage){	
-	var q = $('#q').val();
-	var vLimit = 10;
-	$.getJSON("../../md_claims/datalist/?vPage="+vPage+"&vLimit="+vLimit+"&q="+q,
+	$.getJSON("../../md_claims/getclaims/",
 	function (json) {
 		var params = {
 				vPage  : vPage,
@@ -53,10 +51,9 @@ function fnloadDataList(vPage){
 				vwidth : [5,200,150],		
 				vfields : ["title","desc","proof"],		
 				vbutton	: ["add","edit","delete"],	
-				json : json['Rows']
+				json : json['claims']
 		}
 		dataGrid2(params);
-		pagination(json['TotalRows'],vPage,vLimit);
 	});
 };
 

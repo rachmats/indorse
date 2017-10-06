@@ -12,6 +12,8 @@ var app      = express();
 var server   = require('http').Server(app);
 var io       = require('socket.io')(server);
 var partial = require('express-partial');    
+var Config = require('config-js');
+var config = new Config('./config/cfg.js');
 
 
 app.use(express.static(__dirname + '/public'));
@@ -21,6 +23,16 @@ app.use(function(req,res,next){
 	req.io = io;
 	next();
 });
+
+app.use(session({
+	secret: 'faeb4453e5d14fe6f6d04637f78077c76c73d1b4',
+	proxy: true,
+	resave: true,
+	saveUninitialized: true
+//	store: new Mongodb({ url: dbURL })
+	})
+);
+
 app.use(express.static(path.join(__dirname, 'public')));    
 app.use(express.static(path.join(__dirname, 'static')));
 app.engine('html', require('ejs').renderFile);
@@ -31,7 +43,7 @@ app.set('views', __dirname + '/views');
 require('./router')(app);
 var db = require('./config/database');
 	// Connect to Mongo on start
-	db.connect('mongodb://45.112.125.25:2727/db_indorse', function(err) {
+	db.connect('mongodb://127.0.0.1:27017/db_indorse', function(err) {
 	  if (err) {
 		console.log('Unable to connect to Mongo.')
 		process.exit(1)

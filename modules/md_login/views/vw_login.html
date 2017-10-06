@@ -54,7 +54,7 @@
 		var rec = $('form').serializeArray();
 		e.preventDefault();
 		if(oForm[0].checkValidity()) {
-			$.post('../md_login/process', rec, function(msg){
+			$.post('../../md_login/process', rec, function(msg){
 				if(msg['success']== true)
 				{
 					window.location.href = '../../md_claims/index/?m=data';

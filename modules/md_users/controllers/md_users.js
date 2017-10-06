@@ -4,7 +4,8 @@ var jwt    = require('jsonwebtoken');
 var randtoken = require('rand-token');
 var crypto = require('crypto');
 var nodemailer = require("nodemailer");
-//var config = require('config');
+var Config = require('config-js');
+var config = new Config('./config/cfg.js');
 var db = require('../../../config/database')
 var MongoClient = require('mongodb').MongoClient
 var ObjectID = require('mongodb').ObjectID;
@@ -29,16 +30,15 @@ var smtpTransport = nodemailer.createTransport({
 exports.index = function(req, res){		
 	res.render('../modules/md_home/views/index.html',{module:'users',fnmodule:req.param('m'),id:req.param('id')});    					 				   	
 };
+
 exports.data = function(req, res){	
 	res.render("../modules/md_"+vmodule+"/views/vw_"+vmodule+".html",{title:vtitle});    	
 };
 
-exports.signup = function(req, res){
-		
+exports.signup = function(req, res){		
     res.pageInfo = {};
     res.pageInfo.title = 'Signup';
-	res.render('../modules/md_users/views/vw_signup.html', res.pageInfo);    
-    
+	res.render('../modules/md_users/views/vw_signup.html');        
 };
 
 var genRandomString = function(length){
@@ -194,19 +194,19 @@ exports.resendVerification = function(req,res){
                                     }
                                     else
                                     {
-                                        res.send(501,{ success : false, message : "Error" });
+                                        res.send(501,{ success : false, message : config.get('Msg501') });
                                     }
                             }
                             else
                             {
-                                res.send(501,{ success : false, message : "Error" });
+                                res.send(501,{ success : false, message : config.get('Msg501') });
                             }
                         })
                     })
     }
     else
     {
-        res.send(501,{ success : false, message : "Error" });
+        res.send(501,{ success : false, message : config.get('Msg501') });
     }
 }
 exports.verify = function(req,res){
@@ -234,7 +234,7 @@ exports.verify = function(req,res){
                 //item['tokens'].push(token);
 				collection.update({'email' : req.param('email')},item,{safe:true}, function(err, result) {
 				if (err) {
-                                	    res.send(501,{ success : false, message : "error" });
+                                	    res.send(501,{ success : false, message : config.get('Msg501') });
 				} else {
 
                     name = item['name']
@@ -262,7 +262,7 @@ exports.verify = function(req,res){
 			}
 			else
 			{
-				res.send(401,{ success : false, message : "error 401" });
+				res.send(401,{ success : false, message : config.get('Msg401') });
 			}
 		})
 	})
@@ -270,7 +270,7 @@ exports.verify = function(req,res){
 	}
 	else
 	{
-		res.send(422,{ success : false, message : "error 422" });
+		res.send(422,{ success : false, message : config.get('Msg422') });
 	}
 
 }

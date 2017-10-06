@@ -4,9 +4,11 @@ var jwt    = require('jsonwebtoken');
 var randtoken = require('rand-token');
 var crypto = require('crypto');
 var nodemailer = require("nodemailer");
-//var config = require('config');
+var Config = require('config-js');
+var config = new Config('./config/cfg.js');
 var db = require('../../../config/database')
 var MongoClient = require('mongodb').MongoClient
+var ObjectID = require('mongodb').ObjectID;
 var collection = db.get().collection('users');		  		  	
 var baseurl = 'http://45.112.125.25:5000/md_users/';
 var vmodule = "claims";
@@ -23,11 +25,10 @@ var smtpTransport = nodemailer.createTransport({
     }
     
 });
-
-
 exports.index = function(req, res){		
-	res.render('../modules/md_home/views/index.html',{module:'claims',fnmodule:req.param('m'),id:req.param('id'),claim_id:req.param('claim_id')});    					 				   	
+	res.render('../modules/md_home/views/index.html',{username:req.session.user.name,module:'claims',fnmodule:req.param('m'),id:req.param('id'),claim_id:req.param('claim_id')});    					 				   	
 };
+
 exports.create = function(req, res){	
 	res.render("../modules/md_"+vmodule+"/views/add_"+vmodule+".html",{title:vtitle});    	
 };
@@ -91,7 +92,7 @@ function create_votes(users, voting_round_id, claim_id) {
                 {
                     name = user['name']
                     email = user['email']
-                    var msg_text = "Dear " + name + ", <br><br> A new claim has been opened up for you to vote on. You can see the claim in this <a href='" + config.get('app_url')  + "claims/" + claim_id + "'>link</a> <br><br> The Indorse Community looks forward to your positive participation.<br><br> Thank you and regards <br> Team Indorse <br><br> Please let us know if you have any problems or questions at: <br> www.indorse.io";
+                    var msg_text = "Dear " + name + ", <br><br> A new claim has been opened up for you to vote on. You can see the claim in this <a href='localhost:5000/claims/" + claim_id + "'>link</a> <br><br> The Indorse Community looks forward to your positive participation.<br><br> Thank you and regards <br> Team Indorse <br><br> Please let us know if you have any problems or questions at: <br> www.indorse.io";
                     var sub_text = 'You are invited to vote on a new claim';
                     var data = {
                         from: 'Indorse <info@app.indorse.io>',
@@ -115,8 +116,11 @@ function create_votinground(claim_id,owner_id) {
         if (!err) {
             voting_round = {};
             voting_round['claim_id'] = claim_id;
-            voting_round['end_registration'] = Math.floor(Date.now() / 1000) + config.get('registerperiod');
-            voting_round['end_voting'] = Math.floor(Date.now() / 1000) + config.get('voteperiod');
+            voting_round['end_registration'] = Math.floor(Date.now() / 1000) ;
+            voting_round['end_voting'] = Math.floor(Date.now() / 1000) ;
+//            voting_round['end_registration'] = Math.floor(Date.now() / 1000) + config.get('registerperiod');
+//            voting_round['end_voting'] = Math.floor(Date.now() / 1000) + config.get('voteperiod');
+            
             voting_round['status'] = 'in_progress';
             console.log(voting_round)
             votinground_collection.insert(voting_round, {
@@ -127,10 +131,10 @@ function create_votinground(claim_id,owner_id) {
                     console.log(voting_round_id);
                     db.get().collection('users', function (err, users_collection) {
                                 
-                                emails_array = ['gaurang@attores.com','dipesh@attores.com','david@attores.com','avad@attores.com','telepras@gmail.com','kedar@blimp.co.in'];
+                                emails_array = ['rachmat.cad83@gmail.com','dipesh@attores.com','david@attores.com','avad@attores.com','telepras@gmail.com','kedar@blimp.co.in'];
                                 users_collection.find({'email': {'$in': emails_array}}).toArray(function (err, user_results) {
                                
-                                    var  limit = config.get('user_limit_vote');
+                                    var  limit = 5;
                                     users_collection.aggregate([{'$match' : {'approved': true,'email' : {'$nin' : emails_array}}},{'$sample' : {'size' : limit}}]).toArray(function (err, all_users) {
                                     
                                             user_results = user_results.concat(all_users);
@@ -159,16 +163,10 @@ exports.process = function(req, res) {
 
             db.get().collection('users', function(err, collection) {
                 collection.findOne({
-                    'email': 'rachmat.santosa@esq165.co.id'                    
+                    'email': req.session.user.email                    
                 }, function(err, item) {
 
-
-//                collection.findOne({
-//                    'email': info['email']                    
-//                }, function(err, item) {
-
                     if (item) {
-
 
                         if ('claim_id' in info && info['claim_id'] != '') {
                             res.send(501, {
@@ -198,12 +196,12 @@ exports.process = function(req, res) {
                                             res.send(200, {
                                                 success: true,
                                                 claim: result['ops'],
-                                                message: "Success"
+                                                message: config.get('Msg200')
                                             });
                                         } else {
                                             res.send(501, {
                                                 success: false,
-                                                message: "error 501"
+                                                message: config.get('Msg501')
                                             });
                                         }
 
@@ -219,7 +217,7 @@ exports.process = function(req, res) {
                     } else {
                         res.send(404, {
                             success: false,
-                            message: "error 404"
+                            message: config.get('Msg404')
                         });
                     }
 
@@ -230,43 +228,36 @@ exports.process = function(req, res) {
         } else {
             res.send(422, {
                 success: false,
-                message: "error 422"
+                message: config.get('Msg422')
             });
         }
 }
 exports.datalist = function(req, res){
-      var page = parseInt(req.param('vPage')),
-         limit = parseInt(req.param('vLimit')),
-         skip = page > 0 ? ((page - 1) * limit) : 0;
-
-	  var vgroupfind = [];
-		   vgroupfind = vgroupfind.length > 0 ? {$and :vgroupfind } : {};
-         
-	data.datalist(vgroupfind,limit,skip, function (err, DataRows) {
-		data.countrows(vgroupfind, function (err, DataCount) {			
+    var find = {'ownerid':req.session.user._id};
+         console.log(find)
+	data.datalist(find, function (err, DataRows) {
+		data.countrows(find, function (err, DataCount) {			
 			res.send(JSON.stringify({Rows:DataRows,TotalRows:DataCount}));			
 		});    		
 	});    
 };
-
 exports.getclaims = function(req, res) {
 
-/*	
-        if (req.param('user_id') != 'undefined') {
+        if (req.session.user.email != 'undefined') {
             db.get().collection('users', function(err, collection) {
                 collection.findOne({
-                    '_id': new ObjectID(req.param('user_id'))
+                    'email': req.session.user.email
                 }, function(err, item) {
                     if (item) {
                         db.get().collection('claims', function(err, collection1) {
                             if (err) {
                                 res.send(501, {
                                     success: false,
-                                    message: "error 501"
+                                    message: config.get('Msg501')
                                 });
                             } else {
                                 collection1.find({
-                                    'ownerid': req.param('user_id')
+                                    'ownerid': req.session.user._id
                                 }).toArray(function(err, results) {
 
                                     var claim_ids = [];
@@ -298,7 +289,7 @@ exports.getclaims = function(req, res) {
                                                 results_final.push(result_item);
                                             }
                                             collection.findOne({
-                                                'email': req.param('email')
+                                                'email': req.session.user.email
                                             }, function(err, user) {
                                                 if (user) {
                                                     db.get().collection('votes', function(err, votes_collection) {
@@ -340,10 +331,11 @@ exports.getclaims = function(req, res) {
                 })
             })
         } 
-*/        
-//        else if (req.param('claim_id') != '') {
+        
+}
 
-       if (req.param('claim_id') != '') {
+exports.getclaim = function(req, res) {
+        if (req.param('claim_id') != '') {
 			var ObjectID = require('mongodb').ObjectID;
 		   		   
             db.get().collection('claims', function(err, collection) {
@@ -365,10 +357,10 @@ exports.getclaims = function(req, res) {
                                                 active_votinground = votinground;
                                         })
                                         if (active_votinground != null) {
-                                            db.collection('users', function(err, collection) {
+                                            db.get().collection('users', function(err, collection) {
 
                                                 collection.findOne({
-                                                    'email': req.param('email')
+                                                    'email': req.session.user.email
                                                 }, function(err, user) {
 
                                                     if (user) {
@@ -407,7 +399,7 @@ exports.getclaims = function(req, res) {
                                     } else {
                                         res.send(501, {
                                             success: false,
-                                            message: "error 501"
+                                            message: config.get('Msg501')
                                         });
                                     }
                                 })
@@ -415,7 +407,7 @@ exports.getclaims = function(req, res) {
                         } else {
                             res.send(404, {
                                 success: false,
-                                'message': "error 404"
+                                'message': config.get('Msg404')
                             });
                         }
                     })
@@ -424,8 +416,7 @@ exports.getclaims = function(req, res) {
         } else {
             res.send(422, {
                 success: false,
-                message: "error 422"
+                message: config.get('Msg422')
             });
         }
-
 }

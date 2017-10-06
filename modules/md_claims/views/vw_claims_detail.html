@@ -55,11 +55,12 @@ fnloadData();
 function fnloadData(id){	
 	var q = $('#q').val();
 	var vLimit = 10;
-	$.getJSON("../../md_claims/getclaims/?claim_id=<%= claim_id %>",
+	$.getJSON("../../md_claims/getclaim/?claim_id=<%= claim_id %>",
 	function (json) {		
-		document.getElementById("title").innerHTML = json['claim'].title;
-		document.getElementById("desc").innerHTML = json['claim'].desc;
-		document.getElementById("proof").innerHTML = json['claim'].proof;
+		document.getElementById("title").innerHTML = json['claims'][0]['claim'].title;
+		document.getElementById("desc").innerHTML = json['claims'][0]['claim'].desc;
+		document.getElementById("proof").innerHTML = json['claims'][0]['claim'].proof;
+		
 	});
 };
 	

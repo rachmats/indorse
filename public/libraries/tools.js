@@ -63,9 +63,17 @@ function dataGrid2(params){
 	      var no;  
 		tr.push("<table>")		
 			tr.push("<tr>");		
-		for (var ii = 0; ii < params['json'].length; ii++) {
-					tr.push("<td class='hvr' align='center' width='50px'><a  href='../../md_claims/index/?m=detail&claim_id="+params['json'][ii]['_id']+"'><img src='/images/appr_reward.png' width='200px' height='200px' ></img><h2>"+params['json'][ii]['title']+"</h2><button class='btn btn-info btn-sm' ><i class='glyphicon glyphicon-time'></i> "+params['json'][ii]['status']+"</button></a></td>");										
-		no++;	
+		if(params['json'].length > 0){	
+			for (var ii = 0; ii < params['json'].length; ii++) {
+				var status ;
+						
+						if(params['json'][ii]['votinground']['status'] == 'in_progress'){
+							status = 'Pending Registrations'
+						}
+						tr.push("<td class='hvr' align='center' width='50px'><a  href='../../md_claims/index/?m=detail&claim_id="+params['json'][ii]['_id']+"'><img src='/images/appr_reward.png' width='200px' height='200px' ></img><h2>"+params['json'][ii]['claim']['title']+"</h2><button class='btn btn-info btn-sm' ><i class='glyphicon glyphicon-time'></i> "+status+"</button></a></td>");										
+						
+			no++;	
+			}
 		}
 					tr.push("<td class='hvr' width='50px' align='center'><a  href='../../md_claims/index/?m=create'><img src='/images/disappr_rewards.png' width='200px' height='200px' ></img><h2>Add Claim</h2></a></td>");					
 		
@@ -82,8 +90,8 @@ function ClaimDetail(params){
 	      var no;  
 		tr.push("<table>")		
 			tr.push("<tr>");		
-		for (var ii = 0; ii < params['json'].length; ii++) {
-					tr.push("<td class='hvr' align='center' width='50px'><a  href='javascript:void(0)' onclick='fndisApprove(\""+params['json'][ii]['_id'] +"\")'><img src='/images/appr_reward.png' width='200px' height='200px' ></img><h2>"+params['json'][ii]['title']+"</h2><button class='btn btn-info btn-sm' ><i class='glyphicon glyphicon-time'></i> "+params['json'][ii]['status']+"</button></a></td>");										
+		for (var ii = 0; ii < params['json']['claims'].length; ii++) {
+					tr.push("<td class='hvr' align='center' width='50px'><a  href='javascript:void(0)' onclick='fndisApprove(\""+params['json'][ii]['_id'] +"\")'><img src='/images/appr_reward.png' width='200px' height='200px' ></img><h2>"+params['json'][ii]['title']+"</h2><button class='btn btn-info btn-sm' ><i class='glyphicon glyphicon-time'></i> "+params['json'][ii]['votinggrounds'][0]['status']+"</button></a></td>");										
 		no++;	
 		}
 					tr.push("<td class='hvr' width='50px' align='center'><a  href='../../md_claims/index/?m=create'><img src='/images/disappr_rewards.png' width='200px' height='200px' ></img><h2>Add Claim</h2></a></td>");					
@@ -175,4 +183,44 @@ function form(params){
 							 }	                 
               tr.push("</div>");            
 		$(params['vrenderTo']).append($(tr.join('')));  
+}
+function dataGridVotes(params){
+
+		$(params['vrenderTo']).empty();	
+		  var tr=[];
+	      var no;  
+		tr.push("<table class='table  >")		
+		    tr.push("<tbody>");		
+		    tr.push("<tr  id='t_header' class='bg-aqua'>");
+		    tr.push("<th width='150px'>Title</th>");		    					
+		    tr.push("<th width='200px'>Proof</th>");		    					
+		    tr.push("<th width='100px'>Results</th>");		    					
+		    tr.push("<th width='100px'>You Vote</th>");		    					
+		    tr.push("</tr>");		    
+		    tr.push("</tbody>");		
+		for (var ii = 0; ii < params['json'].length; ii++) {
+			tr.push("<tr>");
+			tr.push("<td><a  href='../../md_votes/index/?m=detail&claim_id="+params['json'][ii]['claim']['_id']+"'><h4>" + params['json'][ii]['claim']['title'] + "</h4></a></td>");
+			tr.push("<td><a  target=blank href='"+params['json'][ii]['claim']['proof']+"'><h4>" + params['json'][ii]['claim']['proof'] + "</h4></a></td>");
+			if(params['json'][ii]['votinground']['status'] == 'in_progress'){
+				tr.push("<td><a  href='../../md_company/index/?m=edit&id="+params['json'][ii]['votinground']['status']+"'class='btn btn-info '>Pending Register</a>");					
+			}	
+			else{
+				tr.push("<td><a  href='../../md_company/index/?m=edit&id="+params['json'][ii]['votinground']['status']+"'class='btn btn-success '>Indorsed</a>");					
+			}	
+			
+			if(params['json'][ii]['vote']['registered'] == true){
+				tr.push("<td><a  href='../../md_company/index/?m=edit&id="+params['json'][ii]['votinground']['status']+"'class='btn btn-info '>Registered</a>");					
+			}	
+			else{
+				tr.push("<td><a  href='../../md_company/index/?m=edit&id="+params['json'][ii]['votinground']['status']+"'class='btn btn-info '>Register</a>");					
+			}	
+			
+			tr.push("</tr>");
+		no++;	
+		}
+		tr.push("<tr>");		
+		tr.push("</table>")		        		
+		
+		$(params['vrenderTo']).append($(tr.join('')));
 }
