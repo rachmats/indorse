@@ -1,0 +1,81 @@
+<!-- views/login.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>INDORSE POC Backend</title>
+   <script src="https://code.jquery.com/jquery-1.10.2.js"></script>       
+<style>
+.hvr:hover img {
+  -moz-transform: scale(1.2);
+  -webkit-transform: scale(1.2);
+  transform: scale(1.2);
+}
+</style>    
+</head>
+
+<!-- Content Header (Page header) -->
+<section class="content-header">          
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+	<div class="navbar-header">
+	  <a class="navbar-brand" href="#"><%= title %></a>
+	</div>
+	<ul class="nav navbar-nav navbar-right">
+	  <li><a href="#"><i class="fa fa-dashboard"></i> <%= title %></a></li>
+	</ul>		
+  </div>
+</nav>          
+</section>
+
+<div class="container">
+
+	<div class="col-sm-6 col-sm-offset-0">
+     
+			
+		  <div class="form-group ">
+			  <label for="cname" class="control-label col-lg-4"><h1></h1></h1></label>
+		  </div>
+			
+	</div>
+
+</div>
+</html>
+<script>
+
+        	
+fnloadData();	
+function fnloadData(id){	
+	var q = $('#q').val();
+	var vLimit = 10;
+	$.getJSON("../../md_claims/getclaim/?claim_id=<%= claim_id %>",
+	function (json) {		
+		document.getElementById("title").innerHTML = json['claim'].title;
+		document.getElementById("desc").innerHTML = json['claim'].desc;
+		document.getElementById("proof").innerHTML = json['claim'].proof;
+		if((json['votingrounds'][0].status == 'in_progress')){
+			document.getElementById("button").innerHTML = "<a href='javascript:void(0)'  onclick='fnRegister(\"<%= claim_id %>\")'  class='btn btn-info'>Register</a>";
+		}
+		if((json['votingrounds'][0].status == 'in_progress')&&(json['vote'].registered==true)){
+			document.getElementById("button").innerHTML = "<a href='javascript:void(0)'  onclick='fnRegister(\"<%= claim_id %>\")'  class='btn btn-success'>Registered</a>";
+		}
+		
+	});
+};
+	
+function fnRegister(id) {	
+    if (confirm("Are you sure do you want process this data?") == true) {		
+	$.ajax({
+		type: "GET",
+        url: '../../md_votes/register/?claim_id='+id,
+		dataType: "json",
+		success: function(data) {
+			fnloadData(id);	
+		},
+		error: function() {
+			alert('error handing here');
+		}
+	});			
+    }else{}
+}
+	
+</script>
